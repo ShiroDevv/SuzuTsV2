@@ -11,7 +11,9 @@ import { CommandHandler } from "./commandHandler/commandHandler.js";
 
 //* Setting up the bot
 async function SetupSuzu(suzu: Shiro.CommandClient) {
+    CommandHandler(suzu);
 
+    suzu.connect();
 }
 
 export { SetupSuzu }

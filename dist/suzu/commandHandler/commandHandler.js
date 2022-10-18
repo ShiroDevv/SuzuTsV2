@@ -1,28 +1,30 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CommandHandler = void 0;
 //* Importing modules
-import Shiro from "shirojs";
-import glob from "glob";
-
+const shirojs_1 = __importDefault(require("shirojs"));
+const glob_1 = __importDefault(require("glob"));
 //* making the function
-async function commandHandler(suzu: Shiro.CommandClient) {
+async function commandHandler(suzu) {
     //* running the commands setup functions.
-    const dirname = process.cwd().replaceAll("\\", "/")
-    glob(`${dirname}/dist/suzu/commandHandler/messageCommands/**.js`, (err, files) => {
+    const dirname = process.cwd().replaceAll("\\", "/");
+    (0, glob_1.default)(`${dirname}/dist/suzu/commandHandler/messageCommands/**.js`, (err, files) => {
         files.forEach((file) => {
             const command = require(file);
-            if (command.setup) command.setup(suzu);
-            else console.log(`${file} does not include a setup function!`);
+            if (command.setup)
+                command.setup(suzu);
+            else
+                console.log(`${file} does not include a setup function!`);
         });
     });
-
     //* Interaction commands.
-    const commands: Array<{
-        name: string;
-        main: Function;
-    }> = [];
-
+    const commands = [];
     suzu.on("ready", () => {
         //* Getting the commands and adding them to the bot
-        glob(`${dirname}/dist/suzu/commandHandler/interactionCommands/**/*.js`, (err, files) => {
+        (0, glob_1.default)(`${dirname}/dist/suzu/commandHandler/interactionCommands/**/*.js`, (err, files) => {
             files.forEach((file) => {
                 const command = require(file);
                 if (command.name && command.description) {
@@ -33,49 +35,38 @@ async function commandHandler(suzu: Shiro.CommandClient) {
                         type: command.type,
                         defaultPermission: command.defaultPermission
                     });
-
                     suzu.createGuildCommand("967117817663074304", {
-                        name : command.name,
-                        description : command.description,
-                        options : command.options,
-                        type : command.type,
-                        defaultPermission : command.defaultPermission
-                    })
-
+                        name: command.name,
+                        description: command.description,
+                        options: command.options,
+                        type: command.type,
+                        defaultPermission: command.defaultPermission
+                    });
                     commands.push({
                         name: command.name,
                         main: command.main
-                    })
+                    });
                 }
-            })
-        })
-    })
-
+            });
+        });
+    });
     //* Command handling
     suzu.on("interactionCreate", async (interaction) => {
-        if (interaction instanceof Shiro.CommandInteraction) {
-            //* Getting the command
+        if (interaction instanceof shirojs_1.default.CommandInteraction) {
             const commandName = interaction.data.name;
-            //* Creating the message to edit (Akwnoledging the command)
             await interaction.createMessage("Bot is loading~");
-
-            //* Looking for the command
             for (let i = 0; i < commands.length; i++) {
-                //* If the name is the same, give them the command
                 if (commands[i].name === commandName.trimEnd()) {
                     try {
                         return await commands[i].main(suzu, interaction);
-                    } catch (err) {
-                        //* If there was an error, let the client know.
+                    }
+                    catch (err) {
                         return suzu.emit("error", err);
                     }
                 }
             }
-
-            //* If the command isnt found
             return interaction.editOriginalMessage("Command not in current version!");
         }
     });
 }
-
-export { commandHandler as CommandHandler };
+exports.CommandHandler = commandHandler;

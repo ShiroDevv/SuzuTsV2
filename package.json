@@ -3,7 +3,7 @@
         "axios": "^1.1.3",
         "dotenv": "^16.0.3",
         "glob": "^8.0.3",
-        "shirojs": "^0.8.5",
+        "shirojs": "^0.8.66",
         "terminal-kit": "^3.0.0"
     },
     "devDependencies": {
@@ -11,5 +11,8 @@
         "@types/node": "^18.11.0",
         "@types/terminal-kit": "^2.5.0",
         "typescript": "^4.8.4"
+    },
+    "scripts": {
+        "debug" : "npx tsc && node ./dist/index.js"
     }
 }

@@ -65,7 +65,7 @@ process.stdout.on("resize", () => {
 async function LogTable() {
     console.clear();
     terminal.table([
-        ["Bot info", "Shiro & Suzu"],
+        ["Bot info", "Shiro / Suzu"],
         ["Suzu Tag", suzu.user.username + "#" + suzu.user.discriminator],
         ["Suzu Server Counr", `${suzu.guilds.size}`],
         ["Suzu Members", getSuzuMembers()],
